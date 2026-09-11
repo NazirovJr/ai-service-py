@@ -1,0 +1,63 @@
+[project]
+name = "ai-service-py"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "NazirovJr", email = "naziroffjr@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = []
+
+[project.scripts]
+ai-service-py = "ai_service_py:main"
+
+[build-system]
+requires = ["uv_build>=0.12.10,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "mypy>=2.3.1",
+    "pytest>=9.1.1",
+    "ruff>=0.16.6",
+]
+
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = [
+    "E", "W",  # pycodestyle — стиль
+    "F",       # pyflakes — реальные ошибки (мёртвые импорты, необъявленные имена)
+    "I",       # isort — порядок импортов (иначе вечные конфликты в диффах)
+    "N",       # pep8-naming — ловит camelCase, к которому привыкла рука после Java
+    "UP",      # pyupgrade — устаревший синтаксис → современный
+    "B",       # bugbear — типовые баги, в т.ч. изменяемые аргументы по умолчанию
+    "SIM",     # упрощение кода
+    "RUF",     # правила самого ruff
+]
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+files = ["src", "tests"]
+
+# Тесты пишут свободнее: фикстуры, моки, локальные хелперы без аннотаций.
+# Ослабляем ТОЛЬКО их, основной код остаётся строгим.
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+
+[tool.pytest.ini_options]
+minversion = "9.0"
+addopts = [
+    "-ra",              # краткая сводка по всем незелёным тестам
+    "--strict-markers", # опечатка в имени маркера = ошибка, а не тихий пропуск
+    "--strict-config",  # опечатка в самом конфиге тоже роняет запуск
+]
+testpaths = ["tests"]
+
