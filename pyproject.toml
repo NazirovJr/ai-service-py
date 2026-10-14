@@ -7,7 +7,14 @@ authors = [
     { name = "NazirovJr", email = "naziroffjr@gmail.com" }
 ]
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "fastapi>=0.142.2",
+    "httpx>=0.28.1",
+    "ollama>=0.6.3",
+    "pydantic>=2.13.5",
+    "pydantic-settings>=2.15.0",
+    "uvicorn>=0.54.0",
+]
 
 [project.scripts]
 ai-service-py = "ai_service_py:main"
@@ -39,6 +46,14 @@ select = [
     "SIM",     # упрощение кода
     "RUF",     # правила самого ruff
 ]
+ignore = [
+    # RUF001-003 ищут "неоднозначные" юникод-символы — защита от гомоглиф-атак
+    # (латинская 'a' подменена кириллической 'а' в ИДЕНТИФИКАТОРЕ).
+    # У нас кириллица в комментариях и тестовых данных осознанная, это шум.
+    "RUF001",  # неоднозначный символ в строке
+    "RUF002",  # ... в докстринге
+    "RUF003",  # ... в комментарии
+]
 
 [tool.mypy]
 python_version = "3.13"
@@ -60,4 +75,9 @@ addopts = [
     "--strict-config",  # опечатка в самом конфиге тоже роняет запуск
 ]
 testpaths = ["tests"]
+# pytest сам не умеет запускать `async def` тесты — нужен плагин.
+# auto: все async-тесты подхватываются без @pytest.mark.asyncio на каждом.
+asyncio_mode = "auto"
+# область жизни event loop для async-фикстур
+asyncio_default_fixture_loop_scope = "function"
 
